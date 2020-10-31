@@ -6,31 +6,20 @@ function getMove(player, board) {
 
   // TODO: Determine valid moves
   // TODO: Calculate best move
-  let move;
-  do {
-    const randomNum = Math.floor(Math.random() * 7);
-    move = { column: randomNum };
-  } while (!isValidMove(move, board));
-  return move;
-}
 
-function isValidMove(move, board) {
-  // console.log("isValidMove");
-  if (move.column < 0 || move.column > 6) return false;
-  if (board[0][move.column] !== 0) return false;
-  return true;
-}
+  // let move;
+  // do {
+  //   const randomNum = Math.floor(Math.random() * 7);
+  //   move = { column: randomNum };
+  // } while (!isValidMove(move, board));
+  // return move;
 
-// adapted from https://www.neverstopbuilding.com/blog/minimax
-function getScore(board, depth, player) {
-  if (getWinner(board) === 0) return 0;
-  else if (getWinner(board) === player) return MAX_SCORE - depth;
-  else if (getWinner(board) !== player) return depth - MAX_SCORE;
+  return minimax(board, 0, me).move;
 }
 
 // adapted from https://www.neverstopbuilding.com/blog/minimax
 function minimax(board, depth, player) {
-  if (getWinner(board) != 0) return getScore(board, depth, player);
+  if (getWinner(board) !== 0) return getScore(board, depth, player);
   depth += 1;
   let scores = [];
   let moves = [];
@@ -52,6 +41,13 @@ function minimax(board, depth, player) {
   }
 }
 
+// adapted from https://www.neverstopbuilding.com/blog/minimax
+function getScore(board, depth) {
+  if (getWinner(board) === 0) return 0;
+  else if (getWinner(board) === me) return MAX_SCORE - depth;
+  else if (getWinner(board) !== me) return depth - MAX_SCORE;
+}
+
 function getNewBoard(board, move, player) {
   let newBoard = JSON.parse(JSON.stringify(board)); // copy the board
   for (let i = board.length - 1; i >= 0; i--) {
@@ -71,7 +67,14 @@ function getAvailableMoves(board) {
   }
   return availableMoves;
 }
-// i = row, j = column
+
+function isValidMove(move, board) {
+  // console.log("isValidMove");
+  if (move.column < 0 || move.column > 6) return false;
+  if (board[0][move.column] !== 0) return false;
+  return true;
+}
+
 function getWinner(board) {
   for (let row = 0; row < board.length; row++) {
     for (let col = 0; col < board[row].length; col++) {
