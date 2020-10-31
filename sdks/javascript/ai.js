@@ -1,4 +1,7 @@
 const MAX_SCORE = 42;
+const NEGATIVE_INF = -999999;
+const POSITIVE_INF = 999999;
+
 let me;
 
 function getMove(player, board) {
@@ -14,31 +17,81 @@ function getMove(player, board) {
   // } while (!isValidMove(move, board));
   // return move;
 
-  return minimax(board, 0, me).move;
+  return maximize(board, 4).move;
+
+  // return getNextMove();
+}
+
+let current = 0;
+function getNextMove() {
+  current = (current + 1) % 7;
+  return {column: current};
 }
 
 // adapted from https://www.neverstopbuilding.com/blog/minimax
-function minimax(board, depth, player) {
-  if (getWinner(board) !== 0 || depth >= 4) return {score: getScore(board, depth, player)};
-  depth++;
-  let scores = [];
-  let moves = [];
+// function minimax(board, depth, player) {
+//   if (getWinner(board) !== 0 || depth >= 4) return {score: getScore(board, depth, player)};
+//   depth++;
+//   let scores = [];
+//   let moves = [];
 
-  getAvailableMoves(board).forEach((move) => {
-    const possibleBoard = getNewBoard(board, move, player);
-    scores.push(minimax(possibleBoard, depth, player === 1 ? 2 : 1).score);
-    moves.push(move);
+//   getAvailableMoves(board).forEach((move) => {
+//     const possibleBoard = getNewBoard(board, move, player);
+//     scores.push(minimax(possibleBoard, depth, player === 1 ? 2 : 1).score);
+//     moves.push(move);
+//   });
+
+//   if (player === me) {
+//     // do the max calculation
+//     const max_score_index = scores.indexOf(Math.max(...scores));
+//     return { score: scores[max_score_index], move: moves[max_score_index] };
+//   } else {
+//     // do the min calculation
+//     const min_score_index = scores.indexOf(Math.min(...scores));
+//     return { score: scores[min_score_index], move: moves[min_score_index] };
+//   }
+// }
+
+function maximize(board, depth, alpha, beta) {
+  let score = getScore(board, depth);
+
+  if (getWinner(board) !== 0 || depth === 0) return {move: undefined, score: score};
+
+  let bestMove = {move: undefined, score: NEGATIVE_INF};
+
+  getAvailableMoves(board).forEach(move => {
+    let newBoard = getNewBoard(board, move, me);
+    let nextMove = minimize(newBoard, depth - 1, alpha, beta);
+    if (!bestMove.move || nextMove.score > bestMove.score) {
+      bestMove.move = move;
+      bestMove.score = nextMove.score;
+      alpha = nextMove.score;
+    }
+    if (alpha >= beta) return;
   });
 
-  if (player === me) {
-    // do the max calculation
-    const max_score_index = scores.indexOf(Math.max(...scores));
-    return { score: scores[max_score_index], move: moves[max_score_index] };
-  } else {
-    // do the min calculation
-    const min_score_index = scores.indexOf(Math.min(...scores));
-    return { score: scores[min_score_index], move: moves[min_score_index] };
-  }
+  return bestMove;
+}
+
+function minimize(board, depth, alpha, beta) {
+  let score = getScore(board, depth);
+
+  if (getWinner(board) !== 0 || depth === 0) return {move: undefined, score: score};
+
+  let bestMove = {move: undefined, score: POSITIVE_INF};
+
+  getAvailableMoves(board).forEach(move => {
+    let newBoard = getNewBoard(board, move, me === 1 ? 2 : 1);
+    let nextMove = maximize(newBoard, depth - 1, alpha, beta);
+    if (!bestMove.move || nextMove.score < bestMove.score) {
+      bestMove.move = move;
+      bestMove.score = nextMove.score;
+      beta = nextMove.score;
+    }
+    if (alpha >= beta) return;
+  });
+
+  return bestMove;
 }
 
 // adapted from https://www.neverstopbuilding.com/blog/minimax
