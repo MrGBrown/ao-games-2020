@@ -1,6 +1,9 @@
 const MAX_SCORE = 42;
+let me;
 
 function getMove(player, board) {
+  me = player; // set this global variable so we know who we are
+
   // TODO: Determine valid moves
   // TODO: Calculate best move
   let move;
@@ -29,12 +32,24 @@ function getScore(board, depth, player) {
 function minimax(board, depth, player) {
   if (getWinner(board) != 0) return getScore(board, depth, player);
   depth += 1;
-  scores = [];
-  moves = [];
+  let scores = [];
+  let moves = [];
 
   getAvailableMoves(board).forEach((move) => {
     const possibleBoard = getNewBoard(board, move, player);
+    scores.push(minimax(possibleBoard, depth, player === 1 ? 2 : 1).score);
+    moves.push(move);
   });
+
+  if (player === me) {
+    // do the max calculation
+    const max_score_index = scores.indexOf(Math.max(...scores));
+    return { score: scores[max_score_index], move: moves[max_score_index] };
+  } else {
+    // do the min calculation
+    const min_score_index = scores.indexOf(Math.min(...scores));
+    return { score: scores[min_score_index], move: moves[min_score_index] };
+  }
 }
 
 function getNewBoard(board, move, player) {
@@ -56,38 +71,44 @@ function getAvailableMoves(board) {
   }
   return availableMoves;
 }
-
+// i = row, j = column
 function getWinner(board) {
-  for (i = 0; i < board.length; i++) {
-    for (j = 0; j < board[i].length; j++) {
-      const currentPiece = board[i][j];
+  for (let row = 0; row < board.length; row++) {
+    for (let col = 0; col < board[row].length; col++) {
+      const currentPiece = board[row][col];
       if (currentPiece !== 0) {
         // do horizontal check
         let count = 1;
-        for (k = j + 1; k < board[i].length; k++) {
-          if (board[i][k] === currentPiece) {
+        for (let k = col + 1; k < board[row].length; k++) {
+          if (board[row][k] === currentPiece) {
             count++;
             if (count === 4) return currentPiece;
-          }
+          } else break;
         }
         // do vertical check
-        for (n = j + 1; n < board[i].length; n++) {
-          if (board[i][n] === currentPiece) {
+        count = 1;
+        for (let k = row + 1; k < board.length; k++) {
+          if (board[k][col] === currentPiece) {
             count++;
             if (count === 4) return currentPiece;
-          }
+          } else break;
         }
         // do diagonal check
-        for (x = j + 1; n < board[i].length; x++) {
-          if (board[i][x] === currentPiece) {
+        let k = row + 1;
+        let l = col + 1;
+        count = 1;
+        while (k < board.length && l < board[k].length) {
+          if (board[k][l] === currentPiece) {
             count++;
             if (count === 4) return currentPiece;
-          }
+          } else break;
+          k++;
+          l++;
         }
       }
     }
-    getWinner(board[i]);
   }
+  return 0;
 }
 
 function prepareResponse(move) {
