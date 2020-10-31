@@ -19,8 +19,8 @@ function getMove(player, board) {
 
 // adapted from https://www.neverstopbuilding.com/blog/minimax
 function minimax(board, depth, player) {
-  if (getWinner(board) !== 0) return getScore(board, depth, player);
-  depth += 1;
+  if (getWinner(board) !== 0 || depth >= 4) return {score: getScore(board, depth, player)};
+  depth++;
   let scores = [];
   let moves = [];
 
