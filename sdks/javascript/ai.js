@@ -1,6 +1,8 @@
 const MAX_SCORE = 42;
 const NEGATIVE_INF = -999999;
 const POSITIVE_INF = 999999;
+const NUM_ROWS = 6;
+const NUM_COLS = 7;
 
 let me;
 
@@ -25,7 +27,7 @@ function getMove(player, board) {
 let current = 0;
 function getNextMove() {
   current = (current + 1) % 7;
-  return {column: current};
+  return { column: current };
 }
 
 // adapted from https://www.neverstopbuilding.com/blog/minimax
@@ -55,11 +57,11 @@ function getNextMove() {
 function maximize(board, depth, alpha, beta) {
   let score = getScore(board, depth);
 
-  if (getWinner(board) !== 0 || depth === 0) return {move: undefined, score: score};
+  if (getWinner(board) !== 0 || depth === 0) return { move: undefined, score: score };
 
-  let bestMove = {move: undefined, score: NEGATIVE_INF};
+  let bestMove = { move: undefined, score: NEGATIVE_INF };
 
-  getAvailableMoves(board).forEach(move => {
+  getAvailableMoves(board).forEach((move) => {
     let newBoard = getNewBoard(board, move, me);
     let nextMove = minimize(newBoard, depth - 1, alpha, beta);
     if (!bestMove.move || nextMove.score > bestMove.score) {
@@ -76,11 +78,11 @@ function maximize(board, depth, alpha, beta) {
 function minimize(board, depth, alpha, beta) {
   let score = getScore(board, depth);
 
-  if (getWinner(board) !== 0 || depth === 0) return {move: undefined, score: score};
+  if (getWinner(board) !== 0 || depth === 0) return { move: undefined, score: score };
 
-  let bestMove = {move: undefined, score: POSITIVE_INF};
+  let bestMove = { move: undefined, score: POSITIVE_INF };
 
-  getAvailableMoves(board).forEach(move => {
+  getAvailableMoves(board).forEach((move) => {
     let newBoard = getNewBoard(board, move, me === 1 ? 2 : 1);
     let nextMove = maximize(newBoard, depth - 1, alpha, beta);
     if (!bestMove.move || nextMove.score < bestMove.score) {
@@ -94,11 +96,38 @@ function minimize(board, depth, alpha, beta) {
   return bestMove;
 }
 
-// adapted from https://www.neverstopbuilding.com/blog/minimax
 function getScore(board, depth) {
-  if (getWinner(board) === 0) return 0;
-  else if (getWinner(board) === me) return MAX_SCORE - depth;
-  else if (getWinner(board) !== me) return depth - MAX_SCORE;
+  let verticalPoints,
+    horizontalPoints,
+    diagonal1Points,
+    diagonal2Points = 0;
+
+  // get the vertical points
+  for (let row = 0; row < NUM_ROWS - 3; row++) {
+    for (let col = 0; col < NUM_COLS; col++) {
+      verticalPoints += getPositionScore(board, row, col, 1, 0);
+    }
+  }
+
+  // if (getWinner(board) === 0) return 0;
+  // else if (getWinner(board) === me) return MAX_SCORE - depth;
+  // else if (getWinner(board) !== me) return depth - MAX_SCORE;
+
+  return verticalPoints + horizontalPoints + diagonal1Points + diagonal2Points;
+}
+
+function getPositionScore(board, row, col, changeRow, changeCol) {
+  let positionScore = 0;
+  let currentPiece = board[row][col];
+  if (currentPiece === 0) return 0;
+  for (let i = 0; i < 4; i++) {
+    if (board[row][col] === currentPiece) positionScore++;
+    else break;
+    row += changeRow;
+    col += changeCol;
+  }
+  if (currentPiece === me) return positionScore;
+  else return -positionScore;
 }
 
 function getNewBoard(board, move, player) {
@@ -173,4 +202,11 @@ function prepareResponse(move) {
   return response;
 }
 
-module.exports = { getMove, isValidMove, prepareResponse, getWinner, getNewBoard };
+module.exports = {
+  getMove,
+  isValidMove,
+  prepareResponse,
+  getWinner,
+  getNewBoard,
+  getPositionScore,
+};
