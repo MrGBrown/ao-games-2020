@@ -138,18 +138,26 @@ function getScore(board, depth) {
 }
 
 function getPositionScore(board, row, col, changeRow, changeCol) {
-  let positionScore = 0;
-  let currentPiece = board[row][col];
-  if (currentPiece === 0) return 0;
+  let myScore = 0;
+  let theirScore = 0;
+
+  // let currentPiece = board[row][col];
+  // if (currentPiece === 0) return 0;
+
   for (let i = 0; i < 4; i++) {
     if (board[row] === undefined || board[row][col] === undefined) break;
-    if (board[row][col] === currentPiece) positionScore += i + 1;
-    else break;
+    if (board[row][col] === me) myScore++;
+    else if (board[row][col] !== me && board[row][col] !== 0) theirScore++;
+
     row += changeRow;
     col += changeCol;
   }
-  if (currentPiece === me) return positionScore;
-  else return -positionScore;
+
+  // if (theirScore === 3) {
+  //   myScore -= 1000;
+  // }
+
+  return myScore;
 }
 
 function getNewBoard(board, move, player) {
