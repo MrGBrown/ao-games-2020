@@ -153,6 +153,9 @@ function getPositionScore(board, row, col, changeRow, changeCol) {
     col += changeCol;
   }
 
+  if (myScore === 4) return 10000;
+  if (theirScore === 4) return -10000;
+
   // if (theirScore === 3) {
   //   myScore -= 1000;
   // }
