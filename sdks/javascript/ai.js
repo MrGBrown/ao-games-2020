@@ -13,7 +13,11 @@ function getMove(player, board) {
 }
 
 function getRandomMove() {
-  return {column: Math.floor(Math.random() * 7)}
+  var move;
+  while (!isValidMove(move)) {
+    move = {column: Math.floor(Math.random() * 7)};
+  }
+  return move;
 }
 
 function maximize(board, depth, alpha, beta) {
@@ -95,7 +99,8 @@ function getScore(board, depth) {
     }
   }
 
-  return verticalPoints + horizontalPoints + diagonal1Points + diagonal2Points + depth * depth;
+  // return verticalPoints + horizontalPoints + diagonal1Points + diagonal2Points + depth * depth;
+  return verticalPoints + horizontalPoints + diagonal1Points + diagonal2Points;
 }
 
 function getPositionScore(board, row, col, changeRow, changeCol) {
