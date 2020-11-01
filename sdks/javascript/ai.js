@@ -1,4 +1,3 @@
-const MAX_SCORE = 42;
 const NEGATIVE_INF = -999999;
 const POSITIVE_INF = 999999;
 const NUM_ROWS = 6;
@@ -8,7 +7,13 @@ var me;
 
 function getMove(player, board) {
   me = player; // set this global variable so we know who we are
-  return maximize(board, 6, NEGATIVE_INF, POSITIVE_INF).move;
+  var move = maximize(board, 6, NEGATIVE_INF, POSITIVE_INF).move;
+  if (move !== undefined) return move;
+  else return getRandomMove()
+}
+
+function getRandomMove() {
+  return {column: Math.floor(Math.random() * 7)}
 }
 
 function maximize(board, depth, alpha, beta) {
@@ -90,7 +95,7 @@ function getScore(board, depth) {
     }
   }
 
-  return verticalPoints + horizontalPoints + diagonal1Points + diagonal2Points;
+  return verticalPoints + horizontalPoints + diagonal1Points + diagonal2Points + depth * depth;
 }
 
 function getPositionScore(board, row, col, changeRow, changeCol) {
@@ -116,7 +121,7 @@ function getPositionScore(board, row, col, changeRow, changeCol) {
   //   myScore -= 1000;
   // }
 
-  return myScore;
+  return myScore - 0.5*theirScore;
 }
 
 function getNewBoard(board, move, player) {
