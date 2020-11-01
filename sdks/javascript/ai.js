@@ -143,7 +143,7 @@ function getPositionScore(board, row, col, changeRow, changeCol) {
   if (currentPiece === 0) return 0;
   for (let i = 0; i < 4; i++) {
     if (board[row] === undefined || board[row][col] === undefined) break;
-    if (board[row][col] === currentPiece) positionScore++;
+    if (board[row][col] === currentPiece) positionScore += i + 1;
     else break;
     row += changeRow;
     col += changeCol;
