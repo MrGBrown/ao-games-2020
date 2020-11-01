@@ -181,7 +181,7 @@ test("gets the right overall score", () => {
       [0, 0, 0, 0, 0, 2, 0],
       [0, 0, 0, 0, 0, 0, 2],
     ])
-  ).toEqual(-8);
+  ).toEqual(-39);
   expect(
     ai.getScore([
       [1, 0, 0, 0, 0, 0, 0],

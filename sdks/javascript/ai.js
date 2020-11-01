@@ -19,7 +19,7 @@ function getMove(player, board) {
   // } while (!isValidMove(move, board));
   // return move;
 
-  return maximize(board, 4).move;
+  return maximize(board, 6).move;
 
   // return getNextMove();
 }
@@ -103,7 +103,7 @@ function getScore(board, depth) {
   let diagonal2Points = 0;
 
   // get the vertical points
-  for (let row = 0; row < NUM_ROWS - 3; row++) {
+  for (let row = 0; row < NUM_ROWS; row++) {
     for (let col = 0; col < NUM_COLS; col++) {
       verticalPoints += getPositionScore(board, row, col, 1, 0);
     }
@@ -111,21 +111,21 @@ function getScore(board, depth) {
 
   // get the horizontal points
   for (let row = 0; row < NUM_ROWS; row++) {
-    for (let col = 0; col < NUM_COLS - 3; col++) {
+    for (let col = 0; col < NUM_COLS; col++) {
       horizontalPoints += getPositionScore(board, row, col, 0, 1);
     }
   }
 
   // get the diagonal1 points
-  for (let row = 0; row < NUM_ROWS - 3; row++) {
-    for (let col = 0; col < NUM_COLS - 3; col++) {
+  for (let row = 0; row < NUM_ROWS; row++) {
+    for (let col = 0; col < NUM_COLS; col++) {
       diagonal1Points += getPositionScore(board, row, col, 1, 1);
     }
   }
 
   // get the diagonal1 points
-  for (let row = 0; row < NUM_ROWS - 3; row++) {
-    for (let col = 3; col < NUM_COLS; col++) {
+  for (let row = 0; row < NUM_ROWS; row++) {
+    for (let col = 0; col < NUM_COLS; col++) {
       diagonal2Points += getPositionScore(board, row, col, 1, -1);
     }
   }
@@ -142,6 +142,7 @@ function getPositionScore(board, row, col, changeRow, changeCol) {
   let currentPiece = board[row][col];
   if (currentPiece === 0) return 0;
   for (let i = 0; i < 4; i++) {
+    if (board[row] === undefined || board[row][col] === undefined) break;
     if (board[row][col] === currentPiece) positionScore++;
     else break;
     row += changeRow;
