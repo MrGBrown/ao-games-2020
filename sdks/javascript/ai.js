@@ -97,15 +97,36 @@ function minimize(board, depth, alpha, beta) {
 }
 
 function getScore(board, depth) {
-  let verticalPoints,
-    horizontalPoints,
-    diagonal1Points,
-    diagonal2Points = 0;
+  let verticalPoints = 0;
+  let horizontalPoints = 0;
+  let diagonal1Points = 0;
+  let diagonal2Points = 0;
 
   // get the vertical points
   for (let row = 0; row < NUM_ROWS - 3; row++) {
     for (let col = 0; col < NUM_COLS; col++) {
       verticalPoints += getPositionScore(board, row, col, 1, 0);
+    }
+  }
+
+  // get the horizontal points
+  for (let row = 0; row < NUM_ROWS; row++) {
+    for (let col = 0; col < NUM_COLS - 3; col++) {
+      horizontalPoints += getPositionScore(board, row, col, 0, 1);
+    }
+  }
+
+  // get the diagonal1 points
+  for (let row = 0; row < NUM_ROWS - 3; row++) {
+    for (let col = 0; col < NUM_COLS - 3; col++) {
+      diagonal1Points += getPositionScore(board, row, col, 1, 1);
+    }
+  }
+
+  // get the diagonal1 points
+  for (let row = 0; row < NUM_ROWS - 3; row++) {
+    for (let col = 3; col < NUM_COLS; col++) {
+      diagonal2Points += getPositionScore(board, row, col, 1, -1);
     }
   }
 
@@ -209,4 +230,5 @@ module.exports = {
   getWinner,
   getNewBoard,
   getPositionScore,
+  getScore,
 };
