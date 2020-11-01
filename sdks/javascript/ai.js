@@ -9,12 +9,12 @@ function getMove(player, board) {
   me = player; // set this global variable so we know who we are
   var move = maximize(board, 6, NEGATIVE_INF, POSITIVE_INF).move;
   if (move !== undefined) return move;
-  else return getRandomMove()
+  else return getRandomMove(board)
 }
 
-function getRandomMove() {
+function getRandomMove(board) {
   var move;
-  while (!isValidMove(move)) {
+  while (!isValidMove(move, board)) {
     move = {column: Math.floor(Math.random() * 7)};
   }
   return move;
